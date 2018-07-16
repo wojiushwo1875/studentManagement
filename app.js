@@ -13,6 +13,7 @@ app.use(session({
 // 路由1
 app.get('/login',(req,res)=>{
     console.log(req.session);
+    // 直接读取文件
     res.sendFile(path.join(__dirname,'/static/views/login.html'));
 })
 // 路由2
