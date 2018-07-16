@@ -16,6 +16,7 @@
     }
     .code-img {
       height: 34px;
+      cursor: pointer;
     }
   </style>
   <!-- Bootstrap -->
@@ -49,12 +50,12 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="userPass" class="col-sm-2 control-label">验证码</label>
+                <label for="yzPass" class="col-sm-2 control-label">验证码</label>
                 <div class="col-sm-6">
-                  <input type="password" name="userPass" class="form-control" id="userPass" placeholder="请输入验证码">
+                  <input type="password" name="yzPass" class="form-control" id="yzPass" placeholder="请输入验证码">
                 </div>
                 <div class="col-sm-4">
-                  <img class="code-img" src="../img/code.PNG" alt="">
+                  <img class="code-img" src="/login/captcha" alt="">
                 </div>
               </div>
               <div class="form-group">
@@ -76,3 +77,14 @@
 <script src="../lib/js/jquery-1.12.4.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../lib/js/bootstrap.min.js"></script>
+
+<script>
+  $(function () { 
+    $('.code-img').click(function () { 
+      // console.log("222");
+      // 两次的地址是一样的,所以要在地址后面拼接上随机数
+      $(this).attr('src',$(this).attr('src')+`?${Math.random()}`);
+      // console.log($(this).attr('src'));
+     })
+   })
+</script>
