@@ -67,3 +67,15 @@
 <script src="../lib/js/jquery-1.12.4.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../lib/js/bootstrap.min.js"></script>
+<script src="../lib/js/jquery.md5.js"></script>
+<script>
+  $(function () { 
+    $('form button[type=submit]').click(function (e) { 
+      // e.preventDefault();
+      let oldPass = $('#userPass').val();
+      let md5 = $.md5(oldPass, 'hello world');
+      $('#userPass').val(md5);
+      // console.log($('#userPass').val());
+     })
+   })
+</script>

@@ -4,12 +4,8 @@ let svgCaptcha = require('svg-captcha');
 let path = require('path');
 let session = require('express-session')
 let bodyParser = require('body-parser');
-const MongoClient = require('mongodb').MongoClient;
-// Connection URL
-const url = 'mongodb://localhost:27017';
-// Database Name
-const dbName = 'SZHM19';
-
+let myT = require(path.join(__dirname,'/tools/myT.js'));
+let routerIndex = require(path.join(__dirname,'router/index'))
 let app = express();
 
 // 静态资源托管
@@ -18,11 +14,18 @@ app.use(express.static('static'));
 app.use(bodyParser.urlencoded({
     extended: false
 }))
+
+// 引用模板
+app.engine('html', require('express-art-template'));
+app.set('views', './static/views')
+
 // 加密
 app.use(session({
     secret: 'keyboard cat',
 }))
 
+
+app.use('/index', routerIndex);
 // 路由------------------------------------------------
 // 路由1
 // 使用get方法 访问登陆页面时 直接读取登录页面 并返回
@@ -107,38 +110,46 @@ app.post('/register', (req, res) => {
     // 接收数据
     let userName = req.body.userName;
     let userPass = req.body.userPass;
-    // console.log(userName);
-    // console.log(userPass);
+    // 使用自己封装的包的方法
+    myT.find('userList',{userName},(err, docs)=>{
+        if (docs.length == 0) {
+            myT.insert('userList',{userName,userPass},(err, result)=>{
+                if(!err) myT.mess(res,'注册成功','/login');
+            })
+        }else{
+            myT.mess(res,'注册失败了','/register');
+        }
+    })
     // 连接数据库,判断用户名是否存在
-    MongoClient.connect(url, function (err, client) {
-        const db = client.db(dbName);
-        const collection = db.collection('userList');
-        collection.find({
-            userName
-        }).toArray(function (err, docs) {
-            // console.log(docs);
-            if (docs.length == 0) {
-                // 未注册,就将数据保存到数据库
-                collection.insertOne({
-                    userName,
-                    userPass
-                }, function(err, result) {
-                    if(err) console.log(err);
-                    // console.log(result);
-                    res.setHeader('content-type', 'text/html;charset=utf-8');
-                    res.send('<script>alert("恭喜你注册成功!");window.location.href="/login"</script>');
-                    // 关闭数据库
-                    client.close();
-                  });
-            } else {
-                // 已注册
-                res.setHeader('content-type', 'text/html;charset=utf-8');
-                res.send('<script>alert("该用户名已经被注册,请重新注册");window.location.href="/register"</script>');
-            }
+    // MongoClient.connect(url, function (err, client) {
+    //     const db = client.db(dbName);
+    //     const collection = db.collection('userList');
+    //     collection.find({
+    //         userName
+    //     }).toArray(function (err, docs) {
+    //         // console.log(docs);
+    //         if (docs.length == 0) {
+    //             // 未注册,就将数据保存到数据库
+    //             collection.insertOne({
+    //                 userName,
+    //                 userPass
+    //             }, function(err, result) {
+    //                 if(err) console.log(err);
+    //                 // console.log(result);
+    //                 res.setHeader('content-type', 'text/html;charset=utf-8');
+    //                 res.send('<script>alert("恭喜你注册成功!");window.location.href="/login"</script>');
+    //                 // 关闭数据库
+    //                 client.close();
+    //               });
+    //         } else {
+    //             // 已注册
+    //             res.setHeader('content-type', 'text/html;charset=utf-8');
+    //             res.send('<script>alert("该用户名已经被注册,请重新注册");window.location.href="/register"</script>');
+    //         }
 
-        });
+    //     });
         
-    });
+    // });
 })
 
 app.listen(8888, '127.0.0.1', () => {

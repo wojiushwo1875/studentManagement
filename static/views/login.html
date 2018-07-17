@@ -86,5 +86,13 @@
       $(this).attr('src',$(this).attr('src')+`?${Math.random()}`);
       // console.log($(this).attr('src'));
      })
+
+     $('form button[type=submit]').click(function (e) { 
+      // e.preventDefault();
+      let oldPass = $('#userPass').val();
+      let md5 = $.md5(oldPass, 'hello world');
+      $('#userPass').val(md5);
+      // console.log($('#userPass').val());
+     })
    })
 </script>
