@@ -87,7 +87,7 @@ app.get('/index', (req, res) => {
     }
 })
 // 路由5 
-// 退出
+// 退出功能
 app.get('/logout', (req, res) => {
     // 删除session
     delete req.session.userInfo;
